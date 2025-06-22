@@ -24,14 +24,14 @@ export const dummy = (_node: Element, config?: TransitionConfig) => {
  * import { createGSAPTransition } from './transitions';
  *
  * // If you want a custom GSAP instance with default options, otherwise just pass `gsap` directly
- * const customGsap = Object.assign(__gsap, {
- *   to: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.to(targets, { overwrite: 'auto', ...vars }),
- *   from: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.from(targets, { overwrite: 'auto', ...vars }),
+ * const customGsap = Object.assign({}, __gsap, {
+ *   to: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.to(targets, { overwrite: 'auto', duration: 0.15, ...vars }),
+ *   from: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.from(targets, { overwrite: 'auto', duration: 0.15, ...vars }),
  *   fromTo: (
  *     targets: gsap.TweenTarget,
  *     fromVars: gsap.TweenVars,
  *     toVars: gsap.TweenVars,
- *   ): gsap.core.Tween => __gsap.fromTo(targets, fromVars, { overwrite: 'auto', ...toVars }),
+ *   ): gsap.core.Tween => __gsap.fromTo(targets, { overwrite: 'auto', ...fromVars }, { overwrite: 'auto', duration: 0.15, ...toVars }),
  * });
  *
  * // Inject a gsap instance. Create once and reuse it across your app
