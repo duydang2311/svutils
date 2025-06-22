@@ -23,8 +23,8 @@ export const dummy = (_node: Element, config?: TransitionConfig) => {
  * import __gsap from 'gsap';
  * import { createGSAPTransition } from './transitions';
  *
- * // If you want a custom GSAP instance with default options:
- * const myCustomGsap = Object.assign(__gsap, {
+ * // If you want a custom GSAP instance with default options, otherwise just pass `gsap` directly
+ * const customGsap = Object.assign(__gsap, {
  *   to: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.to(targets, { overwrite: 'auto', ...vars }),
  *   from: (targets: gsap.TweenTarget, vars: gsap.TweenVars): gsap.core.Tween => __gsap.from(targets, { overwrite: 'auto', ...vars }),
  *   fromTo: (
@@ -34,13 +34,11 @@ export const dummy = (_node: Element, config?: TransitionConfig) => {
  *   ): gsap.core.Tween => __gsap.fromTo(targets, fromVars, { overwrite: 'auto', ...toVars }),
  * });
  *
- * // Inject your custom GSAP. Create once and reuse throughout your app.
- * const tsap = createGSAPTransition(myCustomGsap);
+ * // Inject a gsap instance. Create once and reuse it across your app
+ * const tsap = createGSAPTransition(customGsap);
  *
- * const fadeTransition = tsap(
- *   node,
- *   (node, gsap) => gsap.to(node, { opacity: 0, duration: 1 })
- * );
+ * // Use it in a Svelte component, gsap vars will have overwrite as 'auto' by default
+ * <span in:tsap={(node, gsap) => gsap.from(node, { opacity: 0 })}>Hello world</span>
  */
 export const createGSAPTransition =
     (gsap: typeof __gsap) =>
