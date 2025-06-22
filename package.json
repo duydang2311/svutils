@@ -1,0 +1,49 @@
+{
+    "name": "@duydang2311/svutils",
+    "version": "0.0.1",
+    "description": "A collection of Svelte utilities",
+    "author": "duydang2311",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "bun run build.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/duydang2311/svutils.git"
+    },
+    "keywords": [
+        "svutils",
+        "svelte",
+        "utils",
+        "transition",
+        "gsap",
+        "duydang2311"
+    ],
+    "bugs": {
+        "url": "https://github.com/duydang2311/svutils/issues"
+    },
+    "homepage": "https://github.com/duydang2311/svutils#readme",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "/dist"
+    ],
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "bun-plugin-dts": "^0.3.0"
+    },
+    "peerDependencies": {
+        "gsap": "^3.13.0",
+        "svelte": "^5.34.7",
+        "typescript": "^5"
+    }
+}
