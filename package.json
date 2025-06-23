@@ -34,7 +34,8 @@
         ".": {
             "import": "./dist/index.js",
             "types": "./dist/index.d.ts",
-            "require": "./dist/index.cjs"
+            "require": "./dist/index.cjs",
+            "svelte": "./dist/index.js"
         }
     },
     "devDependencies": {
