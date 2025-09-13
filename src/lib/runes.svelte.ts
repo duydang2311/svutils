@@ -1,5 +1,7 @@
 import { untrack } from 'svelte';
 
+type MaybePromise<T> = T | Promise<T>;
+
 /**
  * Creates a reactive watcher that runs a provided function whenever the dependencies change.
  *
@@ -15,10 +17,17 @@ import { untrack } from 'svelte';
  * The effect function can optionally return a cleanup function, which will be called before the effect re-runs.
  */
 export const watch = (depsFn: () => unknown) => {
-    return (fn: () => void | (() => void)) => {
+    return (fn: () => MaybePromise<void> | MaybePromise<() => void>) => {
         $effect(() => {
             depsFn();
-            return untrack(() => fn());
+            const ret = untrack(() => fn());
+            return ret instanceof Promise
+                ? () => {
+                      ret.then((a) => {
+                          if (typeof a === 'function') a();
+                      });
+                  }
+                : ret;
         });
     };
 };
@@ -36,10 +45,17 @@ export const watch = (depsFn: () => unknown) => {
  * The effect function can optionally return a cleanup function, which will be called before the effect re-runs.
  */
 watch.pre = (depsFn: () => unknown) => {
-    return (fn: () => void | (() => void)) => {
+    return (fn: () => MaybePromise<void> | MaybePromise<() => void>) => {
         $effect.pre(() => {
             depsFn();
-            return untrack(() => fn());
+            const ret = untrack(() => fn());
+            return ret instanceof Promise
+                ? () => {
+                      ret.then((a) => {
+                          if (typeof a === 'function') a();
+                      });
+                  }
+                : ret;
         });
     };
 };
