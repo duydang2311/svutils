@@ -4,7 +4,7 @@ export interface Ref<T> {
     current: T;
 }
 
-export interface AsyncRef<T> extends Ref<T> {
+export interface AsyncRef<T> extends Ref<T | undefined> {
     loading: boolean;
 }
 
