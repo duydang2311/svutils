@@ -1,13 +1,11 @@
 import { untrack } from 'svelte';
 
-/**
- * A generic interface representing a mutable reference to a value of type `T`.
- *
- * @template T - The type of the value being referenced.
- * @property current - The current value being referenced.
- */
 export interface Ref<T> {
     current: T;
+}
+
+export interface AsyncRef<T> extends Ref<T> {
+    loading: boolean;
 }
 
 class SvelteRef<T> implements Ref<T> {
@@ -19,36 +17,44 @@ class SvelteRef<T> implements Ref<T> {
     }
 }
 
-interface CreateRef {
-    <T>(): Ref<T | undefined>;
-    <T>(fn: () => T): Ref<T>;
-    <T>(value: T): Ref<T>;
-}
-
-/**
- * Creates a reactive `Ref` that initializes with a given value or from a function.
- *
- * If a function is provided, the reference will automatically update its value
- * whenever the function's result changes, using `$effect.pre`
- * If a value is provided, the reference will simply hold that value.
- *
- * @typeParam T - The type of the value to be referenced.
- * @param valueOrFn - The initial value or a function that returns the value to be referenced.
- * @returns A `Ref<T>` instance that holds the value and updates reactively if a function is provided.
- */
-export const createRef: CreateRef = <T>(valueOrFn?: T | (() => T)): Ref<T> => {
-    let ref: Ref<T>;
+export function createRef<T>(): Ref<T | undefined>;
+export function createRef<T>(fn: () => Promise<T>): AsyncRef<T>;
+export function createRef<T>(fn: () => T): Ref<T>;
+export function createRef<T>(value: Promise<T>): AsyncRef<T>;
+export function createRef<T>(value: T): Ref<T>;
+export function createRef<T>(valueOrFn?: T | (() => T)) {
+    const ref = new SvelteRef<T>();
     if (typeof valueOrFn === 'function') {
-        const fn = valueOrFn as () => T;
-        ref = new SvelteRef<T>(fn());
+        const fn = valueOrFn as () => T | Promise<T>;
+        const initialValue = fn();
+        if (initialValue instanceof Promise) {
+            initialValue.then((resolved) => {
+                ref.current = resolved;
+            });
+        } else {
+            ref.current = initialValue;
+        }
         $effect.pre(() => {
             const value = fn();
             untrack(() => {
-                ref.current = value;
+                if (value instanceof Promise) {
+                    value.then((resolved) => {
+                        ref.current = resolved;
+                    });
+                } else {
+                    ref.current = value;
+                }
             });
         });
     } else {
-        ref = new SvelteRef<T>(valueOrFn);
+        const value = valueOrFn as T | Promise<T> | undefined;
+        if (value instanceof Promise) {
+            value.then((resolved) => {
+                ref.current = resolved;
+            });
+        } else if (value) {
+            ref.current = value;
+        }
     }
     return ref;
-};
+}
